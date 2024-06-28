@@ -4,6 +4,7 @@ import {connectDB} from './connection/connection.js';
 import dotenv from 'dotenv';
 import cron from 'node-cron';
 import { movePlannedMessagesToMessages } from './services/messageService.js';
+import { monitorCPU } from './services/monitorService.js';
 
 dotenv.config();
 
@@ -27,3 +28,5 @@ app.listen(PORT, () => {
 
 
 cron.schedule('* * * * *', movePlannedMessagesToMessages);
+
+setInterval(monitorCPU, 5000);
