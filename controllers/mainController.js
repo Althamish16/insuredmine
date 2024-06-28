@@ -115,4 +115,91 @@ export const creatMessage = async (req, res) => {
 
 
 
+export const aggregatedPolicy = async (req, res) => {
+  try {
+
+    const userId = req.params.userId;
+    
+    const aggregatedData = await User.aggregate([
+      { $match: { userId: userId } },
+      {
+        $lookup: {
+          from: 'policyinfos', // Collection name for PolicyInfo
+          localField: 'userId',
+          foreignField: 'userId',
+          as: 'policies'
+        }
+      },
+      {
+        $unwind: {
+          path: '$policies',
+          preserveNullAndEmptyArrays: true // Keep users without policies
+        }
+      },
+      {
+        $lookup: {
+          from: 'policycategories', // Collection name for PolicyCategory
+          localField: 'policies.categoryId',
+          foreignField: 'categoryId',
+          as: 'category'
+        }
+      },
+      {
+        $unwind: {
+          path: '$category',
+          preserveNullAndEmptyArrays: true // Keep policies without categories
+        }
+      },
+      {
+        $lookup: {
+          from: 'policycarriers', // Collection name for PolicyCarrier
+          localField: 'policies.companyId',
+          foreignField: 'companyId',
+          as: 'carrier'
+        }
+      },
+      {
+        $unwind: {
+          path: '$carrier',
+          preserveNullAndEmptyArrays: true // Keep policies without carriers
+        }
+      },
+      {
+        $group: {
+          _id: '$userId',
+          firstname: { $first: '$firstname' },
+          dob: { $first: '$dob' },
+          address: { $first: '$address' },
+          phone: { $first: '$phone' },
+          state: { $first: '$state' },
+          zip: { $first: '$zip' },
+          email: { $first: '$email' },
+          gender: { $first: '$gender' },
+          userType: { $first: '$userType' },
+          policies: {
+            $push: {
+              policy_number: '$policies.policy_number',
+              policy_start_date: '$policies.policy_start_date',
+              policy_end_date: '$policies.policy_end_date',
+              category_name: '$category.category_name',
+              company_name: '$carrier.company_name',
+              policy_mode: '$policies.policy_mode',
+              hasActiveClientPolicy: '$policies.hasActiveClientPolicy',
+              csr: '$policies.csr',
+              premium_amount_written: '$policies.premium_amount_written',
+              premium_amount: '$policies.premium_amount',
+              producer: '$policies.producer'
+            }
+          }
+        }
+      }
+    ]);
+
+    res.status(200).json(aggregatedData);
+  } catch (error) {
+    console.error('Error retrieving aggregated policy information', error);
+    res.status(500).json({ message: 'Error retrieving aggregated policy information', error });
+  }
+}
+
 
