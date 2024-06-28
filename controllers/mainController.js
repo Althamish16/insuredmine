@@ -45,29 +45,32 @@ export const searchPolicy = async (req, res) => {
 
   try {
     // Step 2: Retrieve User Information
-    const user = await User.findOne({ firstname: username });
+    const users = await User.find({ firstname: { $regex: new RegExp(username, 'i') } });
 
-    if (!user) {
+    if (!users) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     // Step 3: Retrieve Policy Information
-    const policies = await PolicyInfo.find({ userId: user.userId })
+    const userPolicyData = await Promise.all(users.map(async (user) => {
+      const policies = await PolicyInfo.find({ userId: user.userId });
+      return {
+        user: {
+          firstname: user.firstname,
+          dob: user.dob,
+          address: user.address,
+          phone: user.phone,
+          state: user.state,
+          zip: user.zip,
+          email: user.email,
+          gender: user.gender,
+          userType: user.userType,
+        },
+        policies: policies
+      };
+    }));
 
-    res.status(200).json({
-      user: {
-        firstname: user.firstname,
-        dob: user.dob,
-        address: user.address,
-        phone: user.phone,
-        state: user.state,
-        zip: user.zip,
-        email: user.email,
-        gender: user.gender,
-        userType: user.userType,
-      },
-      policies: policies
-    });
+    res.status(200).json(userPolicyData);
   
   } catch (error) {
 
