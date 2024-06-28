@@ -4,6 +4,7 @@ import path from 'path';
 import { convertXlsxToCsv } from '../utils/utility.js';
 import User from '../models/userModel.js';
 import PolicyInfo from '../models/policyInfoModel.js';
+import PlannedMessage from '../models/plannedMessageModel.js';
 
 const uploadDir = path.resolve('./uploads');
 
@@ -71,15 +72,47 @@ export const searchPolicy = async (req, res) => {
     }));
 
     res.status(200).json(userPolicyData);
-  
+
   } catch (error) {
 
     console.error('Error retrieving policy information:', error);
-    
+
     res.status(500).json({ message: 'Error retrieving policy information', error });
-  
+
   }
 
 }
+
+
+
+
+export const creatMessage = async (req, res) => {
+  const { message, day, time } = req.body;
+
+  if (!message || !day || !time) {
+    return res.status(400).json({ error: 'Message, day, and time are required' });
+  }
+
+
+  try {
+
+    const datetimeString = `${day}T${time}`;
+    const datetime = new Date(datetimeString);
+
+    const plannedMessage = new PlannedMessage({ message, day, time, datetime });
+
+    await plannedMessage.save();
+
+    res.status(201).json(plannedMessage);
+
+  } catch (error) {
+
+    res.status(500).json({ error: error });
+
+  }
+
+}
+
+
 
 

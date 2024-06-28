@@ -1,5 +1,5 @@
 import express from 'express';
-import { createItem, searchPolicy } from '../controllers/mainController.js';
+import { createItem, searchPolicy, creatMessage } from '../controllers/mainController.js';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
@@ -29,5 +29,7 @@ router.post('/upload', upload.single('file'), createItem);
 
 router.get('/search-policy', searchPolicy);
 
+
+router.post('/message', creatMessage);
 
 export default router;
