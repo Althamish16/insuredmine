@@ -28,6 +28,7 @@ This project provides a set of APIs to manage and query insurance policy data. T
 2. Install dependencies:
 
     ```bash
+    npm install pm2 -g
     npm install
     ```
 
