@@ -26,7 +26,8 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
+//Message Planner will auto matically trigger for every one minute
+cron.schedule('* * * * *', movePlannedMessagesToMessages); 
 
-cron.schedule('* * * * *', movePlannedMessagesToMessages);
-
+// Monitoring the CPU
 setInterval(monitorCPU, 5000);

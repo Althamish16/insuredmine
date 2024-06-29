@@ -3,6 +3,7 @@ import PlannedMessage from "../models/plannedMessageModel.js";
 
 export const movePlannedMessagesToMessages = async () => {
   try {
+
     console.log(`movePlannedMessagesToMessages triggered`)
 
     const now = new Date();
@@ -27,6 +28,6 @@ export const movePlannedMessagesToMessages = async () => {
 
     }
   } catch (error) {
-    throw new error;
+    throw error;
   }
 };

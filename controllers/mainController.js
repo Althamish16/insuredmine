@@ -45,7 +45,7 @@ export const searchPolicy = async (req, res) => {
   }
 
   try {
-    // Step 2: Retrieve User Information
+    // Step 2: Retrieve User Information 
     const users = await User.find({ firstname: { $regex: new RegExp(username, 'i') } });
 
     if (!users) {
@@ -96,6 +96,7 @@ export const creatMessage = async (req, res) => {
 
   try {
 
+    //  setting up datetime format to send it in PlannedMessage model
     const datetimeString = `${day}T${time}`;
     const datetime = new Date(datetimeString);
 

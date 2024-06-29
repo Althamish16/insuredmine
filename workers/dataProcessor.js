@@ -7,22 +7,14 @@ import UserAccount from '../models/userAccountsModel.js';
 import PolicyCategory from '../models/policyCategoryModel.js';
 import PolicyCarrier from '../models/policyCarrierModel.js';
 import PolicyInfo from '../models/policyInfoModel.js';
-import mongoose from 'mongoose';
-import { connectDB, connectionClose } from '../connection/connection.js';
+import { connectDB } from '../connection/connection.js';
 import { v4 as uuidv4 } from 'uuid';
 
 const csvFilePath = workerData.csvFilePath;
 const CHUNK_SIZE = 100; // Number of documents to process per chunk
 
-// const connectDB = async () => {
-//         await mongoose.connect('mongodb://localhost:27017/insurance', {
-//             useNewUrlParser: true,
-//             useUnifiedTopology: true,
-//         });
-//         console.log('MongoDB connected');
-// };
-
 const processAndSaveData = async (collectionName, data) => {
+
     await connectDB();
 
     switch (collectionName) {
@@ -51,7 +43,9 @@ const processAndSaveData = async (collectionName, data) => {
 };
 
 (async () => {
+    
     try {
+
         await connectDB();
 
         let currentChunk = [];
